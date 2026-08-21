@@ -10,25 +10,12 @@ terraform {
 provider "aws" {
   region = "us-east-1"
 
-  # Point at the local Floci emulator instead of real AWS.
-  access_key                 = "test"
-  secret_key                 = "test"
-  skip_credentials_validation = true
-  skip_metadata_api_check     = true
-  skip_requesting_account_id  = true
-  s3_use_path_style           = true
-
-  endpoints {
-    s3  = "http://localhost:4566"
-    sts = "http://localhost:4566"
-  }
-
   # CM-6: Configuration settings, required compliance tags applied to every
   # taggable resource by default. Removes the chance of forgetting them.
   default_tags {
     tags = {
-      Project         = var.project_name
-      Environment     = var.environment
+      Project         = var.cgep-lab
+      Environment     = var.dev
       ManagedBy       = "terraform"
       ComplianceScope = "cge-p-lab"
     }
@@ -41,15 +28,17 @@ resource "random_id" "bucket_suffix" {
 
 locals {
   effective_suffix = var.bucket_suffix != "" ? var.bucket_suffix : random_id.bucket_suffix.hex
-  primary_name     = "${var.project_name}-${var.environment}-data-${local.effective_suffix}"
-  log_name         = "${var.project_name}-${var.environment}-logs-${local.effective_suffix}"
+  primary_name     = "${var.cgep-lab}-${var.dev}-data-${local.effective_suffix}"
+  log_name         = "${var.cgep-lab}-${var.dev}-logs-${local.effective_suffix}"
 }
 
 resource "aws_s3_bucket" "primary" {
   bucket = local.primary_name
 }
+# terraform/primitives/compliant-s3/main.tf
 
 # SC-28: Protection of information at rest.
+# AES-256
 resource "aws_s3_bucket_server_side_encryption_configuration" "primary" {
   bucket = aws_s3_bucket.primary.id
   rule {
@@ -57,6 +46,15 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "primary" {
       sse_algorithm = "AES256"
     }
   }
+
+  # KMS teaser:
+  # rule {
+  #   apply_server_side_encryption_by_default {
+  #     sse_algorithm     = "aws:kms"
+  #     kms_master_key_id = aws_kms_key.bucket.arn
+  #   }
+  #   bucket_key_enabled = true
+  # }
 }
 
 # CM-6: Versioning preserves prior object states for recovery and audit.
@@ -76,6 +74,8 @@ resource "aws_s3_bucket_public_access_block" "primary" {
   restrict_public_buckets = true
 }
 
+# terraform/primitives/compliant-s3/main.tf (continued)
+
 # AU-3 / AU-6: Content of audit records + audit review.
 resource "aws_s3_bucket" "log" {
   bucket = local.log_name
@@ -91,7 +91,7 @@ resource "aws_s3_bucket_ownership_controls" "log" {
 resource "aws_s3_bucket_acl" "log" {
   depends_on = [aws_s3_bucket_ownership_controls.log]
   bucket     = aws_s3_bucket.log.id
-  acl        = "private"
+  acl        = "log-delivery-write"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "log" {
