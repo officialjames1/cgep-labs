@@ -1,4 +1,3 @@
-cat > ~/cgep-labs/.github/workflows/grc-gate.yml << 'EOF'
 name: grc-gate
 on:
   pull_request:
