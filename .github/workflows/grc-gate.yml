@@ -91,14 +91,13 @@ jobs:
         run: |
           cp "$TF_WORKING_DIR"/plan.json evidence/lab-4-3/plan.json
           cp "$TF_WORKING_DIR"/plan.txt  evidence/lab-4-3/plan.txt
-      - name: Upload evidence artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: grc-evidence-${{ github.run_id }}
-          path: evidence/lab-4-3/
-                evidence/lab-4-4/
-          retention-days: 90
+      - name: Ensure evidence vault bucket exists
+        env:
+          VAULT: ${{ vars.EVIDENCE_VAULT }}
+        run: |
+          set -euo pipefail
+          aws s3api head-bucket --bucket "${VAULT}" 2>/dev/null \
+            || aws s3api create-bucket --bucket "${VAULT}" --region us-east-1
       - name: Bundle + sign + upload to vault
         id: sign
         if: always()
@@ -136,9 +135,20 @@ jobs:
           EOF
           aws s3 cp receipt.json "s3://${VAULT}/${KEY_PREFIX}/receipt.json"
           mkdir -p evidence/lab-4-4
-          cp receipt.json evidence/lab-4-4/receipt.json 
+          cp receipt.json evidence/lab-4-4/receipt.json
+      - name: Upload evidence artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: grc-evidence-${{ github.run_id }}
+          path: |
+            evidence/lab-4-3/
+            evidence/lab-4-4/
+          retention-days: 90
       - name: Enforce gate
         if: always()
+        env:
+          VAULT: ${{ vars.EVIDENCE_VAULT }}
         run: |
           test "${{ steps.conftest.outcome }}" = "success" \
             && test "${{ steps.tfsec.outcome }}" = "success" \
@@ -148,6 +158,18 @@ jobs:
           export AWS_SECRET_ACCESS_KEY=testgrc1
           export AWS_DEFAULT_REGION=us-east-1
           export AWS_ENDPOINT_URL=http://localhost:4566
+
+          aws iam get-role --role-name cgep-grc-gate >/dev/null 2>&1 || \
+          aws iam create-role \
+            --role-name cgep-grc-gate \
+            --assume-role-policy-document '{
+              "Version": "2012-10-17",
+              "Statement": [{
+                "Effect": "Allow",
+                "Principal": { "Service": "ec2.amazonaws.com" },
+                "Action": "sts:AssumeRole"
+              }]
+            }'
 
           aws iam put-role-policy \
             --role-name cgep-grc-gate \
@@ -162,4 +184,4 @@ jobs:
             }]
           }
           EOF
-          )"          
+          )"
