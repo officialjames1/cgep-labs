@@ -136,6 +136,11 @@ jobs:
           aws s3 cp receipt.json "s3://${VAULT}/${KEY_PREFIX}/receipt.json"
           mkdir -p evidence/lab-4-4
           cp receipt.json evidence/lab-4-4/receipt.json
+      - name: Verify evidence chain
+        id: verify
+        if: steps.sign.outcome == 'success'
+        run: |
+          bash scripts/verify-evidence.sh "${{ github.run_id }}" --vault "${{ vars.EVIDENCE_VAULT }}"
       - name: Upload evidence artifact
         if: always()
         uses: actions/upload-artifact@v4
@@ -152,6 +157,7 @@ jobs:
         run: |
           test "${{ steps.conftest.outcome }}" = "success" \
             && test "${{ steps.tfsec.outcome }}" = "success" \
+            && test "${{ steps.verify.outcome }}" = "success" \
             || exit 1
 
           export AWS_ACCESS_KEY_ID=testgrc
