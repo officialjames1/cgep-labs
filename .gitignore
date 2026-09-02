@@ -10,3 +10,8 @@ crash.log
 
 # OS noise
 .DS_Store
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.DS_Store
