@@ -9,4 +9,17 @@ tfplan
 crash.log
 
 # OS noise
-.DS_Store
+.trestle-work/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.DS_Store
+
+
+
+
+
+
+
+

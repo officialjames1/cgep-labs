@@ -1,0 +1,20 @@
+{
+    "StandardsSubscriptions": [
+        {
+            "StandardsSubscriptionArn": "arn:aws:securityhub:us-east-1:187478111793:subscription/aws-foundational-security-best-practices/v/1.0.0",
+            "StandardsArn": "arn:aws:securityhub:us-east-1::standards/aws-foundational-security-best-practices/v/1.0.0",
+            "StandardsInput": {},
+            "StandardsStatus": "PENDING",
+            "StandardsControlsUpdatable": "READY_FOR_UPDATES",
+            "Provider": "AWS"
+        },
+        {
+            "StandardsSubscriptionArn": "arn:aws:securityhub:us-east-1:187478111793:subscription/nist-800-53/v/5.0.0",
+            "StandardsArn": "arn:aws:securityhub:us-east-1::standards/nist-800-53/v/5.0.0",
+            "StandardsInput": {},
+            "StandardsStatus": "PENDING",
+            "StandardsControlsUpdatable": "READY_FOR_UPDATES",
+            "Provider": "AWS"
+        }
+    ]
+}
