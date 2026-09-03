@@ -41,7 +41,7 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://EVIDENCE_VAULT/runs/LATEST/evidence-LATEST.tar.gz",
+                    "href": "s3://cgep-lab-grc-evidence-vault-e53e936e/runs/33811511395/evidence-33811511395-7095d18037b3416df045802ce72e58f1bfccbd08.tar.gz",
                     "text": "Signed pipeline bundle containing terraform plan.json."
                   }
                 ]
@@ -57,7 +57,7 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://EVIDENCE_VAULT/runs/LATEST/evidence-LATEST.tar.gz",
+                    "href": "s3://cgep-lab-grc-evidence-vault-e53e936e/runs/33811511395/evidence-33811511395-7095d18037b3416df045802ce72e58f1bfccbd08.tar.gz",
                     "text": "Signed pipeline bundle containing terraform plan.json."
                   }
                 ]
@@ -73,7 +73,7 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://EVIDENCE_VAULT/runs/LATEST/evidence-LATEST.tar.gz",
+                    "href": "s3://cgep-lab-grc-evidence-vault-e53e936e/runs/33811511395/evidence-33811511395-7095d18037b3416df045802ce72e58f1bfccbd08.tar.gz",
                     "text": "Signed pipeline bundle containing terraform plan.json."
                   }
                 ]
@@ -89,7 +89,7 @@
                 "links": [
                   {
                     "rel": "evidence",
-                    "href": "s3://EVIDENCE_VAULT/runs/LATEST/evidence-LATEST.tar.gz",
+                    "href": "s3://cgep-lab-grc-evidence-vault-e53e936e/runs/33811511395/evidence-33811511395-7095d18037b3416df045802ce72e58f1bfccbd08.tar.gz",
                     "text": "Signed pipeline bundle containing terraform plan.json."
                   }
                 ]
